@@ -103,13 +103,18 @@ public:
 class MyGuiApp : public wxApp {
 public:
 	bool OnInit();
-	int OnExit();
+	//int OnExit();
 
 	wxFrame* getDialog() { return frame; }
 	void ShowDialog() { isOpen = true; frame->Show();}
-	void CloseDialog() { isOpen = false; OnExit(); }
+	void CloseDialog() {
+		isOpen = false;
+		//frame->Destroy();
+		frame->GetParent()->DestroyChildren();
+	}
 	bool isOpen = false;
 private:
 	MyFrame* frame;
-	wxWindow* wind;
 };
+
+DECLARE_APP(MyGuiApp)

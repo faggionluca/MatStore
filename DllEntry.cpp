@@ -83,8 +83,8 @@ __declspec( dllexport ) int LibInitialize(void)
 	//new wxApp();
 	MyGuiApp* app = new MyGuiApp();
 	wxApp::SetInstance(app);
-	wxEntryStart(GetModuleHandle(NULL), NULL, NULL, SW_SHOW);
-	//wxEntryStart(hInstance);
+	//wxEntryStart(GetModuleHandle(NULL), NULL, NULL, SW_SHOW);
+	wxEntryStart(hInstance);
 	return TRUE;
 }
 

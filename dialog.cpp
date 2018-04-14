@@ -8,6 +8,7 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
+#include <windows.h>
 
 #include "MatStore.h"
 #include "dialog.h"
@@ -24,15 +25,16 @@ MyFrame::MyFrame(wxWindow* parent, wxWindowID id, const wxString& title, const w
 	btnSave = new wxButton(this, wxID_ANY, wxT("Save"));
 	btnLoad = new wxButton(this, wxID_ANY, wxT("Load"));
 	label_1 = new wxStaticText(this, wxID_ANY, wxEmptyString);
-	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(MyFrame::OnExit));
 	set_properties();
 	do_layout();
 	// end wxGlade
+	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(MyFrame::OnExitDlg));
+	this->SetBackgroundColour(wxColor(68, 68, 68, 255));
 }
 
-void MyFrame::OnExit(wxCloseEvent & WXUNUSED)
+void MyFrame::OnExitDlg(wxCloseEvent & WXUNUSED)
 {
-	MatStore::GetInstance().SetVisible(false);
+	this->Iconize();
 }
 
 
@@ -42,7 +44,6 @@ void MyFrame::set_properties()
 	SetTitle(wxT("MatStore"));
 	// end wxGlade
 }
-
 
 void MyFrame::do_layout()
 {

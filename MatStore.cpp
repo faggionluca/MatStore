@@ -24,28 +24,21 @@ bool MyGuiApp::OnInit()
 {
 
 	wxInitAllImageHandlers();
-	wind = new wxWindow();
+	wxWindow* wind = new wxWindow();
 	wind->SetHWND((WXHWND)MatStore::GetInstance().ip->GetMAXHWnd());
 	wind->AdoptAttributesFromHWND();
+	wxGetApp().SetTopWindow(wind);
 
 	frame = new MyFrame(wind, wxID_ANY, wxEmptyString);
-	SetTopWindow(frame);
+	//SetTopWindow(frame);
 	return true;
 }
 
-int MyGuiApp::OnExit()
-{
-
-	if (frame && wind)
-	{
-		wind->SetHWND(NULL);
-		wind->Close();
-		frame->Close();
-		delete frame;
-		delete wind;
-	}
-	return 0;
-}
+//
+//int MyGuiApp::OnExit()
+//{
+//	return 0;
+//}
 
 
 MatStore MatStore::matstoreInst;
@@ -75,6 +68,7 @@ MatStore::~MatStore()
 
 void MatStore::DeleteThis()
 {
+	wxEntryCleanup();
 }
 
 // Activate and Stay Resident
@@ -87,8 +81,6 @@ DWORD MatStore::Start()
 void MatStore::Stop()
 {
 	#pragma message(TODO("Do plugin un-initialization here"))
-	wxTheApp->OnExit();
-	wxEntryCleanup();
 }
 
 DWORD_PTR MatStore::Control( DWORD parameter)
@@ -116,18 +108,13 @@ void MatStore::SetVisible(BOOL show)
 	{
 		wxTheApp->CallOnInit();
 		wxGetApp().ShowDialog();
-		wxTheApp->OnRun();
 	}
 	else if (show && wxGetApp().isOpen)
 	{
 		wxGetApp().CloseDialog();
-		wxTheApp->OnRun();
-
 	}
 	else if (!show && wxGetApp().isOpen)
 	{
 		wxGetApp().CloseDialog();
-		wxTheApp->OnRun();
-
 	}
 }

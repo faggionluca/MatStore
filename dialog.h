@@ -30,7 +30,7 @@ public:
 
     MyFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_FRAME_STYLE);
 
-	void OnExit(wxCloseEvent& WXUNUSED(event));
+	void OnExitDlg(wxCloseEvent& WXUNUSED(event));
 
 private:
     // begin wxGlade: MyFrame::methods
