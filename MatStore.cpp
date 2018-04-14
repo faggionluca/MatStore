@@ -13,53 +13,54 @@
 //***************************************************************************/
 
 #include "MatStore.h"
+#include "resource.h"
+#include "3dsmaxport.h"
 
-#define MatStore_CLASS_ID	Class_ID(0x949169bd, 0x81e0f0ab)
+
+IMPLEMENT_APP_NO_MAIN(MyGuiApp)
 
 
-class MatStore : public GUP
+bool MyGuiApp::OnInit()
 {
-public:
-	//Constructor/Destructor
-	MatStore();
-	virtual ~MatStore();
 
-	// GUP Methods
-	virtual DWORD     Start();
-	virtual void      Stop();
-	virtual DWORD_PTR Control(DWORD parameter);
-	virtual void      DeleteThis();
+	wxInitAllImageHandlers();
+	wind = new wxWindow();
+	wind->SetHWND((WXHWND)MatStore::GetInstance().ip->GetMAXHWnd());
+	wind->AdoptAttributesFromHWND();
 
-	// Loading/Saving
-	virtual IOResult Save(ISave* isave);
-	virtual IOResult Load(ILoad* iload);
-};
+	frame = new MyFrame(wind, wxID_ANY, wxEmptyString);
+	SetTopWindow(frame);
+	return true;
+}
 
-
-
-class MatStoreClassDesc : public ClassDesc2 
+int MyGuiApp::OnExit()
 {
-public:
-	virtual int IsPublic() 							{ return TRUE; }
-	virtual void* Create(BOOL /*loading = FALSE*/) 		{ return new MatStore(); }
-	virtual const TCHAR *	ClassName() 			{ return GetString(IDS_CLASS_NAME); }
-	virtual SClass_ID SuperClassID() 				{ return GUP_CLASS_ID; }
-	virtual Class_ID ClassID() 						{ return MatStore_CLASS_ID; }
-	virtual const TCHAR* Category() 				{ return GetString(IDS_CATEGORY); }
 
-	virtual const TCHAR* InternalName() 			{ return _T("MatStore"); }	// returns fixed parsable name (scripter-visible name)
-	virtual HINSTANCE HInstance() 					{ return hInstance; }					// returns owning module handle
-	
-
-};
-
-
-ClassDesc2* GetMatStoreDesc() { 
-	static MatStoreClassDesc MatStoreDesc;
-	return &MatStoreDesc; 
+	if (frame && wind)
+	{
+		wind->SetHWND(NULL);
+		wind->Close();
+		frame->Close();
+		delete frame;
+		delete wind;
+	}
+	return 0;
 }
 
 
+MatStore MatStore::matstoreInst;
+
+static MatStoreClassDesc matStoreDesc;
+ClassDesc2* GetMatStoreDesc() {
+	return &matStoreDesc;
+}
+
+
+static MatStoreAction MatStoreActions(
+	MAXSTORE_ACT_INTERFACE, _T("MatStore"), IDS_CATEGORY, &matStoreDesc, FP_ACTIONS, kActionMainUIContext,
+	MatStoreAction::pm_show, _T("show"), IDS_CLASS_NAME, 0,
+	p_end,
+	p_end);
 
 
 MatStore::MatStore()
@@ -74,24 +75,28 @@ MatStore::~MatStore()
 
 void MatStore::DeleteThis()
 {
-	delete this;
 }
 
 // Activate and Stay Resident
 DWORD MatStore::Start()
 {
-	#pragma message(TODO("Do plugin initialization here"))
-	#pragma message(TODO("Return if you want remain loaded or not"))
+	ip = Max();
 	return GUPRESULT_KEEP;
 }
 
 void MatStore::Stop()
 {
 	#pragma message(TODO("Do plugin un-initialization here"))
+	wxTheApp->OnExit();
+	wxEntryCleanup();
 }
 
-DWORD_PTR MatStore::Control( DWORD /*parameter*/ )
+DWORD_PTR MatStore::Control( DWORD parameter)
 {
+	if (parameter == 1)
+		SetVisible(TRUE);
+	else if (parameter == 0)
+		SetVisible(FALSE);
 	return 0;
 }
 
@@ -105,3 +110,24 @@ IOResult MatStore::Load(ILoad* /*iload*/)
 	return IO_OK;
 }
 
+void MatStore::SetVisible(BOOL show)
+{
+	if(show && !wxGetApp().isOpen)
+	{
+		wxTheApp->CallOnInit();
+		wxGetApp().ShowDialog();
+		wxTheApp->OnRun();
+	}
+	else if (show && wxGetApp().isOpen)
+	{
+		wxGetApp().CloseDialog();
+		wxTheApp->OnRun();
+
+	}
+	else if (!show && wxGetApp().isOpen)
+	{
+		wxGetApp().CloseDialog();
+		wxTheApp->OnRun();
+
+	}
+}

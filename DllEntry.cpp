@@ -13,6 +13,7 @@
 //***************************************************************************/
 
 #include "MatStore.h"
+#include "wx\wx.h"
 
 extern ClassDesc2* GetMatStoreDesc();
 
@@ -33,6 +34,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID /*lpvReserved*/)
 		// Hang on to this DLL's instance handle.
 		hInstance = hinstDLL;
 		DisableThreadLibraryCalls(hInstance);
+
 		// DO NOT do any initialization here. Use LibInitialize() instead.
 	}
 	return(TRUE);
@@ -77,6 +79,12 @@ __declspec( dllexport ) ULONG LibVersion()
 __declspec( dllexport ) int LibInitialize(void)
 {
 	#pragma message(TODO("Perform initialization here."))
+	//INIT WXWIDGET
+	//new wxApp();
+	MyGuiApp* app = new MyGuiApp();
+	wxApp::SetInstance(app);
+	wxEntryStart(GetModuleHandle(NULL), NULL, NULL, SW_SHOW);
+	//wxEntryStart(hInstance);
 	return TRUE;
 }
 
