@@ -61,6 +61,7 @@
     <ClCompile Include="dialog.cpp" />
     <ClCompile Include="MatStore.cpp" />
     <ClCompile Include="DllEntry.cpp" />
+    <ClCompile Include="warn_dlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MatStore.def" />
@@ -70,6 +71,7 @@
     <ClInclude Include="dialog.h" />
     <ClInclude Include="MatStore.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="warn_dlg.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MatStore.rc" />

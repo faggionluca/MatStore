@@ -15,7 +15,8 @@
 #include "MatStore.h"
 #include "resource.h"
 #include "3dsmaxport.h"
-
+#include <string>
+using namespace  std;
 
 IMPLEMENT_APP_NO_MAIN(MyGuiApp)
 
@@ -27,7 +28,8 @@ bool MyGuiApp::OnInit()
 	wxWindow* wind = new wxWindow();
 	wind->SetHWND((WXHWND)MatStore::GetInstance().ip->GetMAXHWnd());
 	wind->AdoptAttributesFromHWND();
-	wxGetApp().SetTopWindow(wind);
+	//wxGetApp().SetTopWindow(wind);
+	wxTopLevelWindows.Append(wind);
 
 	frame = new MyFrame(wind, wxID_ANY, wxEmptyString);
 	//SetTopWindow(frame);
@@ -100,6 +102,75 @@ IOResult MatStore::Save(ISave* /*isave*/)
 IOResult MatStore::Load(ILoad* /*iload*/)
 {
 	return IO_OK;
+}
+
+void MatStore::StoreMat()
+{
+	MyDialog* dlg = new MyDialog(wxGetApp().getDialog()->GetParent(), wxID_ANY, "Test");
+	dlg->ShowModal();
+	//mats.clear();
+	//nodes.clear();
+	//int skip = 0;
+	//string skipped;
+	//for (int i = 0; i < ip->GetSelNodeCount(); i++)
+	//{
+	//	INode* node = ip->GetSelNode(i);
+	//	Mtl* mtl = node->GetMtl();
+	//	if (mtl) {
+	//		mats.push_back(mtl);
+	//		nodes.push_back(node);
+	//	}
+	//	else skip++;
+	//}
+	//if (skip > 0) skipped = "Skipped " + to_string(skip) + " Objects";
+	//else skipped = "";
+	//string msg = "Stored " + to_string(nodes.size()) + " objects materials " + skipped;
+	//std::wstring widestr = std::wstring(msg.begin(), msg.end());
+	//ip->PushPrompt(widestr.c_str());
+}
+
+void MatStore::ReStoreMat()
+{
+	int i = 0;
+	int skip = 0;
+	int objs = 0;
+	string skipped;
+	for each (INode* var in nodes)
+	{
+		const wchar_t* t = var->GetName();
+		ULONG hd = var->GetHandle();
+		if (ip->GetINodeByHandle(hd)) {
+			var->SetMtl(mats[i]);
+			objs++;
+		}
+		else skip++;
+		i++;
+	}
+	if (skip > 0) skipped = "Skipped " + to_string(skip) + " Objects";
+	else skipped = "";
+	string msg = "Restored " + to_string(objs) + " objects materials " + skipped;
+	std::wstring widestr = std::wstring(msg.begin(), msg.end());
+	ip->PushPrompt(widestr.c_str());
+}
+
+void MatStore::SaveMat()
+{
+	WStr dir, name;
+	FilterList ext = FilterList();
+	ext.Append(_M("MAT LAYOUT(*.csv)"));
+	ext.Append(_M("*.csv"));
+	((Interface8*)ip)->DoMaxSaveAsDialog(ip->GetMAXHWnd(), L"Save Mat Layout to File", dir, name, ext);
+	#pragma message(TODO("Do SAVE TO FILE HERE"))
+}
+
+void MatStore::LoadMat()
+{
+	WStr name, dir;
+	FilterList ext = FilterList();
+	ext.Append(_M("MAT LAYOUT(*.csv)"));
+	ext.Append(_M("*.csv"));
+	((Interface8*)ip)->DoMaxOpenDialog(ip->GetMAXHWnd(), L"Open Mat layout", name, dir, ext);
+	#pragma message(TODO("Do OPEN FILE HERE"))
 }
 
 void MatStore::SetVisible(BOOL show)

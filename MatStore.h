@@ -20,7 +20,9 @@
 #include <iparamb2.h>
 #include <iparamm2.h>
 #include <maxtypes.h>
+#include <vector>
 #include "dialog.h"
+#include "warn_dlg.h"
 //SIMPLE TYPE
 
 
@@ -52,9 +54,15 @@ public:
 	virtual IOResult Save(ISave* isave);
 	virtual IOResult Load(ILoad* iload);
 
-
-	Interface *ip;
+	Interface* ip;
 	MyFrame* dlg;
+
+	std::vector<Mtl*> mats;
+	std::vector<INode*> nodes;
+	void StoreMat();
+	void ReStoreMat();
+	void SaveMat();
+	void LoadMat();
 
 	//SINGLETON ACCESS
 	static MatStore matstoreInst;
@@ -106,11 +114,14 @@ public:
 	//int OnExit();
 
 	wxFrame* getDialog() { return frame; }
-	void ShowDialog() { isOpen = true; frame->Show();}
+	void ShowDialog() { 
+		isOpen = true;
+		MatStore::GetInstance().ip->RegisterDlgWnd(frame->GetHWND());
+		frame->Show();}
 	void CloseDialog() {
 		isOpen = false;
-		//frame->Destroy();
 		frame->GetParent()->DestroyChildren();
+		MatStore::GetInstance().ip->UnRegisterDlgWnd(frame->GetHWND());
 	}
 	bool isOpen = false;
 private:

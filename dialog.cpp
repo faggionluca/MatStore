@@ -17,39 +17,64 @@
 // end wxGlade
 
 MyFrame::MyFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
-	wxFrame(parent, id, title, pos, size, wxBORDER_SIMPLE|wxCAPTION|wxCLIP_CHILDREN|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxFRAME_TOOL_WINDOW|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxSTAY_ON_TOP|wxSYSTEM_MENU)
+	wxFrame(parent, id, title, pos, size, wxBORDER_SIMPLE|wxCAPTION|wxCLIP_CHILDREN|wxCLOSE_BOX|wxFRAME_FLOAT_ON_PARENT|wxFRAME_TOOL_WINDOW|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxSYSTEM_MENU)
 {
 	// begin wxGlade: MyFrame::MyFrame
 	btnStore = new wxButton(this, wxID_ANY, wxT("Store"));
 	btnRestore = new wxButton(this, wxID_ANY, wxT("Restore"));
 	btnSave = new wxButton(this, wxID_ANY, wxT("Save"));
 	btnLoad = new wxButton(this, wxID_ANY, wxT("Load"));
-	label_1 = new wxStaticText(this, wxID_ANY, wxEmptyString);
+
 	set_properties();
 	do_layout();
 	// end wxGlade
-	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(MyFrame::OnExitDlg));
-	this->SetBackgroundColour(wxColor(68, 68, 68, 255));
+
+	//EVENTS
+	Bind(wxEVT_CLOSE_WINDOW, &MyFrame::OnExitDlg,this);
+	btnStore->Bind(wxEVT_BUTTON, &MyFrame::OnStore, this);
+	btnRestore->Bind(wxEVT_BUTTON, &MyFrame::OnRestore, this);
+	btnSave->Bind(wxEVT_BUTTON, &MyFrame::OnSave, this);
+	btnLoad->Bind(wxEVT_BUTTON, &MyFrame::OnLoad, this);
 }
 
 void MyFrame::OnExitDlg(wxCloseEvent & WXUNUSED)
 {
-	this->Iconize();
+	Iconize();
 }
 
+void MyFrame::OnStore(wxCommandEvent & event)
+{
+	MatStore::GetInstance().StoreMat();
+}
+
+void MyFrame::OnRestore(wxCommandEvent & event)
+{
+	MatStore::GetInstance().ReStoreMat();
+}
+
+void MyFrame::OnSave(wxCommandEvent & event)
+{
+	MatStore::GetInstance().SaveMat();
+}
+
+void MyFrame::OnLoad(wxCommandEvent & event)
+{
+	MatStore::GetInstance().LoadMat();
+}
 
 void MyFrame::set_properties()
 {
 	// begin wxGlade: MyFrame::set_properties
 	SetTitle(wxT("MatStore"));
 	// end wxGlade
+	SetBackgroundColour(wxColor(68, 68, 68, 255));
 }
 
 void MyFrame::do_layout()
 {
 	// begin wxGlade: MyFrame::do_layout
 	wxBoxSizer* sizer_2 = new wxBoxSizer(wxHORIZONTAL);
-	wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer(6, 3, 0, 0);
+	wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer(5, 3, 3, 0);
 	sizer_2->Add(0, 5, 0, 0, 0);
 	grid_sizer_1->Add(5, 0, 0, wxEXPAND, 0);
 	grid_sizer_1->Add(btnStore, 0, wxALIGN_CENTER, 0);
@@ -66,9 +91,6 @@ void MyFrame::do_layout()
 	grid_sizer_1->Add(0, 0, 0, 0, 0);
 	grid_sizer_1->Add(0, 0, 0, 0, 0);
 	grid_sizer_1->Add(btnLoad, 0, wxALIGN_CENTER, 0);
-	grid_sizer_1->Add(0, 0, 0, 0, 0);
-	grid_sizer_1->Add(0, 0, 0, 0, 0);
-	grid_sizer_1->Add(label_1, 0, 0, 0);
 	grid_sizer_1->Add(0, 0, 0, 0, 0);
 	sizer_2->Add(grid_sizer_1, 0, wxBOTTOM|wxTOP, 5);
 	SetSizer(sizer_2);
