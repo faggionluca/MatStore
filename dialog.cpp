@@ -37,9 +37,10 @@ MyFrame::MyFrame(wxWindow* parent, wxWindowID id, const wxString& title, const w
 	btnLoad->Bind(wxEVT_BUTTON, &MyFrame::OnLoad, this);
 }
 
-void MyFrame::OnExitDlg(wxCloseEvent & WXUNUSED)
+void MyFrame::OnExitDlg(wxCloseEvent & event)
 {
-	Iconize();
+	MatStore::GetInstance().SetVisible(false);
+	event.Skip();
 }
 
 void MyFrame::OnStore(wxCommandEvent & event)

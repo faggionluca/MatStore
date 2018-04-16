@@ -28,9 +28,9 @@ public:
 	// begin wxGlade: MyFrame::ids
 	// end wxGlade
 
-    MyFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_FRAME_STYLE);
+	MyFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_FRAME_STYLE);
 
-	void OnExitDlg(wxCloseEvent& WXUNUSED(event));
+	void OnExitDlg(wxCloseEvent& event);
 	void OnStore(wxCommandEvent& event);
 	void OnRestore(wxCommandEvent& event);
 	void OnSave(wxCommandEvent & event);

@@ -186,6 +186,6 @@ void MatStore::SetVisible(BOOL show)
 	}
 	else if (!show && wxGetApp().isOpen)
 	{
-		wxGetApp().CloseDialog();
+		wxGetApp().isOpen = false;
 	}
 }
