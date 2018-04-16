@@ -81,7 +81,7 @@ __declspec( dllexport ) int LibInitialize(void)
 	#pragma message(TODO("Perform initialization here."))
 	//INIT WXWIDGET
 	//new wxApp();
-	MyGuiApp* app = new MyGuiApp();
+	GuiApp* app = new GuiApp();
 	wxApp::SetInstance(app);
 	//wxEntryStart(GetModuleHandle(NULL), NULL, NULL, SW_SHOW);
 	wxEntryStart(hInstance);

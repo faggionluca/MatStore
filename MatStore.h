@@ -55,7 +55,7 @@ public:
 	virtual IOResult Load(ILoad* iload);
 
 	Interface* ip;
-	MyFrame* dlg;
+	MatStoreDlg* dlg;
 
 	std::vector<Mtl*> mats;
 	std::vector<INode*> nodes;
@@ -108,7 +108,7 @@ public:
 };
 
 
-class MyGuiApp : public wxApp {
+class GuiApp : public wxApp {
 public:
 	bool OnInit();
 	//int OnExit();
@@ -125,7 +125,7 @@ public:
 	}
 	bool isOpen = false;
 private:
-	MyFrame* frame;
+	MatStoreDlg* frame;
 };
 
-DECLARE_APP(MyGuiApp)
+DECLARE_APP(GuiApp)

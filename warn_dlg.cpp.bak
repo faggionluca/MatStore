@@ -14,10 +14,12 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-WarnDlg::WarnDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
+
+
+MyDialog::MyDialog(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
 	wxDialog(parent, id, title, pos, size, wxCLIP_CHILDREN|wxDEFAULT_DIALOG_STYLE)
 {
-	// begin wxGlade: WarnDlg::WarnDlg
+	// begin wxGlade: MyDialog::MyDialog
 	btnYes = new wxButton(this, wxID_ANY, wxT("Yes"));
 	btnNo = new wxButton(this, wxID_ANY, wxT("No"));
 	checkbox_1 = new wxCheckBox(this, wxID_ANY, wxT(" Dont ask me again"));
@@ -28,17 +30,17 @@ WarnDlg::WarnDlg(wxWindow* parent, wxWindowID id, const wxString& title, const w
 }
 
 
-void WarnDlg::set_properties()
+void MyDialog::set_properties()
 {
-	// begin wxGlade: WarnDlg::set_properties
+	// begin wxGlade: MyDialog::set_properties
 	SetTitle(wxT("Warning Layout already stored"));
 	// end wxGlade
 }
 
 
-void WarnDlg::do_layout()
+void MyDialog::do_layout()
 {
-	// begin wxGlade: WarnDlg::do_layout
+	// begin wxGlade: MyDialog::do_layout
 	wxBoxSizer* sizer_2 = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer* sizer_3 = new wxBoxSizer(wxHORIZONTAL);
 	wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer(2, 3, 0, 0);

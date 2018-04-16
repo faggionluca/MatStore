@@ -18,30 +18,21 @@
 #include <string>
 using namespace  std;
 
-IMPLEMENT_APP_NO_MAIN(MyGuiApp)
+IMPLEMENT_APP_NO_MAIN(GuiApp)
 
 
-bool MyGuiApp::OnInit()
+bool GuiApp::OnInit()
 {
 
 	wxInitAllImageHandlers();
 	wxWindow* wind = new wxWindow();
 	wind->SetHWND((WXHWND)MatStore::GetInstance().ip->GetMAXHWnd());
 	wind->AdoptAttributesFromHWND();
-	//wxGetApp().SetTopWindow(wind);
 	wxTopLevelWindows.Append(wind);
 
-	frame = new MyFrame(wind, wxID_ANY, wxEmptyString);
-	//SetTopWindow(frame);
+	frame = new MatStoreDlg(wind, wxID_ANY, wxEmptyString);
 	return true;
 }
-
-//
-//int MyGuiApp::OnExit()
-//{
-//	return 0;
-//}
-
 
 MatStore MatStore::matstoreInst;
 
@@ -106,7 +97,7 @@ IOResult MatStore::Load(ILoad* /*iload*/)
 
 void MatStore::StoreMat()
 {
-	MyDialog* dlg = new MyDialog(wxGetApp().getDialog()->GetParent(), wxID_ANY, "Test");
+	WarnDlg* dlg = new WarnDlg(wxGetApp().getDialog()->GetParent(), wxID_ANY, "Test");
 	dlg->ShowModal();
 	//mats.clear();
 	//nodes.clear();
