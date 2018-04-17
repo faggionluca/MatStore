@@ -35,19 +35,19 @@
     <TargetExt>.gup</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Hybrid|x64'">
-    <IncludePath>C:\Program Files\Autodesk\3ds Max 2016 SDK\maxsdk\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ADSK_3DSMAX_SDK_2016)\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Program Files\Autodesk\3ds Max 2016 SDK\maxsdk\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ADSK_3DSMAX_SDK_2016)\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Program Files\Autodesk\3ds Max 2016 SDK\maxsdk\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ADSK_3DSMAX_SDK_2016)\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PreprocessorDefinitions>_USRDLL;UNICODE;_UNICODE ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(wxwin)\include\msvc;$(wxwin)\include;C:\Program Files\Autodesk\3ds Max 2016 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(wxwin)\include\msvc;$(wxwin)\include;$(ADSK_3DSMAX_SDK_2016)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level4</WarningLevel>
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Hybrid|x64'">MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
@@ -56,6 +56,21 @@
       <AdditionalDependencies>bmm.lib;core.lib;geom.lib;gfx.lib;mesh.lib;maxutil.lib;maxscrpt.lib;gup.lib;paramblk2.lib;comctl32.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>MatStore.def</ModuleDefinitionFile>
     </Link>
+    <PostBuildEvent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Hybrid|x64'">"$([System.IO.Path]::GetFullPath('$(MaxSdkDir)/tools/RunMUIRCT.exe'))" "$([System.IO.Path]::GetFullPath('$(TargetDir)'))\" $(TargetFileName)
+
+XCOPY "$(ProjectDir)icons" "$(OutDir)$(ProjectName)\icons\" /S /Y</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$([System.IO.Path]::GetFullPath('$(MaxSdkDir)/tools/RunMUIRCT.exe'))" "$([System.IO.Path]::GetFullPath('$(TargetDir)'))\" $(TargetFileName)
+
+XCOPY "$(ProjectDir)icons" "$(OutDir)$(ProjectName)\icons\" /S /Y</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$([System.IO.Path]::GetFullPath('$(MaxSdkDir)/tools/RunMUIRCT.exe'))" "$([System.IO.Path]::GetFullPath('$(TargetDir)'))\" $(TargetFileName)
+
+XCOPY "$(ProjectDir)icons" "$(OutDir)$(ProjectName)\icons\" /S /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dialog.cpp" />

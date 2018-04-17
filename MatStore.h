@@ -55,7 +55,6 @@ public:
 	virtual IOResult Load(ILoad* iload);
 
 	Interface* ip;
-	MatStoreDlg* dlg;
 
 	std::vector<Mtl*> mats;
 	std::vector<INode*> nodes;
@@ -111,21 +110,34 @@ public:
 class GuiApp : public wxApp {
 public:
 	bool OnInit();
-	//int OnExit();
 
 	wxFrame* getDialog() { return frame; }
+	void InitDialog()
+	{
+		wxWindow* wind = new wxWindow();
+		wind->SetHWND((WXHWND)MatStore::GetInstance().ip->GetMAXHWnd());
+		wind->AdoptAttributesFromHWND();
+		wxTopLevelWindows.Append(wind);
+
+		frame = new MatStoreDlg(wind, wxID_ANY, wxEmptyString);
+	}
 	void ShowDialog() { 
 		isOpen = true;
 		MatStore::GetInstance().ip->RegisterDlgWnd(frame->GetHWND());
 		frame->Show();}
 	void CloseDialog() {
 		isOpen = false;
-		frame->GetParent()->DestroyChildren();
+		frame->Close(true);
 		MatStore::GetInstance().ip->UnRegisterDlgWnd(frame->GetHWND());
+	}
+	int ShowWarnDialog() {
+		return Warndlg->ShowDialog();
 	}
 	bool isOpen = false;
 private:
 	MatStoreDlg* frame;
+	WarnDlg* Warndlg;
+
 };
 
 DECLARE_APP(GuiApp)

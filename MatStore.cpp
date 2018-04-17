@@ -8,8 +8,9 @@
 // parties or copied or duplicated in any form, in whole or in part, without
 // the prior written consent of Autodesk, Inc.
 //**************************************************************************/
-// DESCRIPTION: Appwizard generated plugin
-// AUTHOR: 
+// DESCRIPTION: MATStore Plugin allow the user to keep a copy of the previus 
+//				nodes materials for future restores
+// AUTHOR: Luca Faggion
 //***************************************************************************/
 
 #include "MatStore.h"
@@ -25,12 +26,13 @@ bool GuiApp::OnInit()
 {
 
 	wxInitAllImageHandlers();
+
 	wxWindow* wind = new wxWindow();
 	wind->SetHWND((WXHWND)MatStore::GetInstance().ip->GetMAXHWnd());
 	wind->AdoptAttributesFromHWND();
 	wxTopLevelWindows.Append(wind);
+	Warndlg = new WarnDlg(wind, wxID_ANY, "Warning Dialog");
 
-	frame = new MatStoreDlg(wind, wxID_ANY, wxEmptyString);
 	return true;
 }
 
@@ -68,6 +70,7 @@ void MatStore::DeleteThis()
 DWORD MatStore::Start()
 {
 	ip = Max();
+	wxTheApp->CallOnInit();
 	return GUPRESULT_KEEP;
 }
 
@@ -97,27 +100,38 @@ IOResult MatStore::Load(ILoad* /*iload*/)
 
 void MatStore::StoreMat()
 {
-	WarnDlg* dlg = new WarnDlg(wxGetApp().getDialog()->GetParent(), wxID_ANY, "Test");
-	dlg->ShowModal();
-	//mats.clear();
-	//nodes.clear();
-	//int skip = 0;
-	//string skipped;
-	//for (int i = 0; i < ip->GetSelNodeCount(); i++)
-	//{
-	//	INode* node = ip->GetSelNode(i);
-	//	Mtl* mtl = node->GetMtl();
-	//	if (mtl) {
-	//		mats.push_back(mtl);
-	//		nodes.push_back(node);
-	//	}
-	//	else skip++;
-	//}
-	//if (skip > 0) skipped = "Skipped " + to_string(skip) + " Objects";
-	//else skipped = "";
-	//string msg = "Stored " + to_string(nodes.size()) + " objects materials " + skipped;
-	//std::wstring widestr = std::wstring(msg.begin(), msg.end());
-	//ip->PushPrompt(widestr.c_str());
+	int res;
+	{
+		if (mats.size() != 0)
+			res = wxGetApp().ShowWarnDialog();
+		else
+			res = wxID_YES;
+	}
+
+	if (res != wxID_NO && res != wxID_CANCEL)
+	{
+		mats.clear();
+		nodes.clear();
+		int skip = 0;
+		string skipped;
+		for (int i = 0; i < ip->GetSelNodeCount(); i++)
+		{
+			INode* node = ip->GetSelNode(i);
+			Mtl* mtl = node->GetMtl();
+			if (mtl) {
+				mats.push_back(mtl);
+				nodes.push_back(node);
+			}
+			else skip++;
+		}
+		if (skip > 0) skipped = "Skipped " + to_string(skip) + " Objects";
+		else skipped = "";
+		string msg = "Stored " + to_string(nodes.size()) + " objects materials " + skipped;
+		std::wstring widestr = std::wstring(msg.begin(), msg.end());
+		ip->PushPrompt(widestr.c_str());
+	}
+	else
+		ip->DisplayTempPrompt(_M("Keeping current mat layout"),2000);
 }
 
 void MatStore::ReStoreMat()
@@ -128,7 +142,6 @@ void MatStore::ReStoreMat()
 	string skipped;
 	for each (INode* var in nodes)
 	{
-		const wchar_t* t = var->GetName();
 		ULONG hd = var->GetHandle();
 		if (ip->GetINodeByHandle(hd)) {
 			var->SetMtl(mats[i]);
@@ -168,7 +181,7 @@ void MatStore::SetVisible(BOOL show)
 {
 	if(show && !wxGetApp().isOpen)
 	{
-		wxTheApp->CallOnInit();
+		wxGetApp().InitDialog();
 		wxGetApp().ShowDialog();
 	}
 	else if (show && wxGetApp().isOpen)

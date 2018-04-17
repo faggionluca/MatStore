@@ -31,7 +31,7 @@ MatStoreDlg::MatStoreDlg(wxWindow* parent, wxWindowID id, const wxString& title,
 	// end wxGlade
 
 	//EVENTS
-	Bind(wxEVT_CLOSE_WINDOW, &MatStoreDlg::OnExitDlg,this);
+	Bind(wxEVT_CLOSE_WINDOW, &MatStoreDlg::OnExitDlg, this);
 	btnStore->Bind(wxEVT_BUTTON, &MatStoreDlg::OnStore, this);
 	btnRestore->Bind(wxEVT_BUTTON, &MatStoreDlg::OnRestore, this);
 	btnSave->Bind(wxEVT_BUTTON, &MatStoreDlg::OnSave, this);

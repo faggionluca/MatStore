@@ -10,6 +10,8 @@
 //
 
 #include "warn_dlg.h"
+#include <wx/stdpaths.h>
+#include <wx/filename.h>
 
 // begin wxGlade: ::extracode
 // end wxGlade
@@ -25,6 +27,12 @@ WarnDlg::WarnDlg(wxWindow* parent, wxWindowID id, const wxString& title, const w
 	set_properties();
 	do_layout();
 	// end wxGlade
+
+	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(WarnDlg::OnCloseDlg),NULL,this);
+
+	btnYes->Bind(wxEVT_BUTTON, &WarnDlg::OnYes, this);
+	btnNo->Bind(wxEVT_BUTTON, &WarnDlg::OnNo, this);
+
 }
 
 
@@ -38,6 +46,10 @@ void WarnDlg::set_properties()
 
 void WarnDlg::do_layout()
 {
+	wxStandardPaths::Get();
+	wxString fileLocation = wxStandardPaths::Get().GetExecutablePath();
+	fileLocation = wxFileName(fileLocation).GetPath();
+	fileLocation = fileLocation + wxT("/MatStore/icons/warn-msg_32.png");
 	// begin wxGlade: WarnDlg::do_layout
 	wxBoxSizer* sizer_2 = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer* sizer_3 = new wxBoxSizer(wxHORIZONTAL);
@@ -45,7 +57,7 @@ void WarnDlg::do_layout()
 	grid_sizer_1->Add(50, 30, 1, wxEXPAND, 0);
 	grid_sizer_1->Add(0, 0, 0, 0, 0);
 	grid_sizer_1->Add(50, 30, 1, wxEXPAND, 0);
-	wxStaticBitmap* bitmap_1 = new wxStaticBitmap(this, wxID_ANY, wxBitmap(wxT("H:\\Users\\Darky\\Desktop\\Work\\VisualStudio\\MaxTest\\MatStore\\MatStore\\res\\warn-msg_32.png"), wxBITMAP_TYPE_ANY));
+	wxStaticBitmap* bitmap_1 = new wxStaticBitmap(this, wxID_ANY, wxBitmap(fileLocation, wxBITMAP_TYPE_ANY));
 	grid_sizer_1->Add(bitmap_1, 0, wxALIGN_RIGHT, 0);
 	wxStaticText* label_1 = new wxStaticText(this, wxID_ANY, wxT("You have already a stored material layout do you want to overwrite it?"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER|wxST_NO_AUTORESIZE);
 	label_1->SetMinSize(wxSize(200, 35));
@@ -63,5 +75,37 @@ void WarnDlg::do_layout()
 	Layout();
 	Centre();
 	// end wxGlade
+}
+
+void WarnDlg::OnCloseDlg(wxCloseEvent& event)
+{
+	if (this->IsModal())
+		EndModal(retVal);
+	else
+		Close();
+}
+
+void WarnDlg::OnYes(wxCommandEvent & event)
+{
+	if (checkbox_1->GetValue())
+		canshow = false;
+	retVal = wxID_YES;
+	this->Close();
+}
+
+void WarnDlg::OnNo(wxCommandEvent & event)
+{
+	if (checkbox_1->GetValue())
+		canshow = true;
+	retVal = wxID_NO;
+	this->Close();
+}
+
+int WarnDlg::ShowDialog()
+{
+	if (canshow)
+		return this->ShowModal();
+	else
+		return retVal;
 }
 

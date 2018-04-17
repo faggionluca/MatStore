@@ -29,12 +29,18 @@ public:
 	// end wxGlade
 
 	WarnDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+	int ShowDialog();
 
 private:
 	// begin wxGlade: WarnDlg::methods
 	void set_properties();
 	void do_layout();
 	// end wxGlade
+	bool canshow = true;
+	wxStandardID retVal = wxID_CANCEL;
+	void OnCloseDlg(wxCloseEvent& event);
+	void OnYes(wxCommandEvent& event);
+	void OnNo(wxCommandEvent& event);
 
 protected:
 	// begin wxGlade: WarnDlg::attributes
