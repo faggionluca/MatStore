@@ -11,7 +11,7 @@
 // the prior written consent of Autodesk, Inc.
 //**************************************************************************/
 // DESCRIPTION: Includes for Plugins
-// AUTHOR: 
+// AUTHOR: Luca Faggion (DarkImage)
 //***************************************************************************/
 
 #include "3dsmaxsdk_preinclude.h"
@@ -21,6 +21,7 @@
 #include <iparamm2.h>
 #include <maxtypes.h>
 #include <vector>
+#include <string>
 #include "dialog.h"
 #include "warn_dlg.h"
 //SIMPLE TYPE
@@ -58,6 +59,10 @@ public:
 
 	std::vector<Mtl*> mats;
 	std::vector<INode*> nodes;
+	FilterList ext;
+
+	const wchar_t* toWideString(std::string msg);
+
 	void StoreMat();
 	void ReStoreMat();
 	void SaveMat();

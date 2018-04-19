@@ -9,7 +9,7 @@
 // the prior written consent of Autodesk, Inc.
 //**************************************************************************/
 // DESCRIPTION: Contains the Dll Entry stuff
-// AUTHOR: 
+// AUTHOR: Luca Faggion (DarkImage)
 //***************************************************************************/
 
 #include "MatStore.h"
