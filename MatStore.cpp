@@ -48,9 +48,9 @@ ClassDesc2* GetMatStoreDesc() {
 
 
 static MatStoreAction MatStoreActions(
-	MAXSTORE_ACT_INTERFACE, _T("MatStore"), IDS_CATEGORY, &matStoreDesc, FP_ACTIONS, kActionMainUIContext,
-	MatStoreAction::pm_show, _T("show"), IDS_CLASS_NAME, 0,
-	p_end,
+	MAXSTORE_ACT_INTERFACE, _T("MatStore"), IDS_CATEGORY, &matStoreDesc, 
+	FP_ACTIONS, kActionMainUIContext,
+		MatStoreAction::pm_show, _T("show"), IDS_CLASS_NAME, 0, f_icon,_T("AtmosApp"),1, p_end,
 	p_end);
 
 
