@@ -24,20 +24,33 @@
 #include <string>
 #include "dialog.h"
 #include "warn_dlg.h"
-//SIMPLE TYPE
-
-
 #include <guplib.h>
+#include "maxicon.h"
+
+//Serialization Library
+#include <cereal\cereal.hpp>
+#include <cereal\archives\xml.hpp>
+#include <cereal\types\vector.hpp>
+#include <cereal\types\utility.hpp>
 
 
 extern TCHAR *GetString(int id);
 
 extern HINSTANCE hInstance;
+typedef std::pair<std::string,std::string> MAT;
+typedef std::vector<MAT> MATARR;
+struct MatData
+{
+	MATARR materials;
 
+	template <class Archive>
+	void serialize(Archive &ar)
+	{
+		ar(CEREAL_NVP(materials));
+	}
+};
 
 #define MatStore_CLASS_ID	Class_ID(0x446205cf, 0x3d8707f)
-
-
 class MatStore : public GUP
 {
 public:
@@ -59,6 +72,7 @@ public:
 
 	std::vector<Mtl*> mats;
 	std::vector<INode*> nodes;
+	MatData material_lib;
 	FilterList ext;
 
 	const wchar_t* toWideString(std::string msg);
@@ -67,6 +81,9 @@ public:
 	void ReStoreMat();
 	void SaveMat();
 	void LoadMat();
+
+	std::string wchar_tosting(const wchar_t* text);
+	Mtl* getSceneMat(std::string name);
 
 	//SINGLETON ACCESS
 	static MatStore matstoreInst;
@@ -146,3 +163,4 @@ private:
 };
 
 DECLARE_APP(GuiApp)
+

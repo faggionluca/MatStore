@@ -11,3 +11,4 @@ This project uses some environment variable to make it portable
 
 ### Dependencies
 -   [**WxWidgets**](https://github.com/wxWidgets/wxWidgets)
+-   [**Cereal**](https://github.com/USCiLab/cereal)

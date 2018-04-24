@@ -20,7 +20,7 @@
 #include <string>
 #include <fstream>
 #include <limits>
-using namespace  std;
+using namespace std;
 
 IMPLEMENT_APP_NO_MAIN(GuiApp)
 
@@ -50,25 +50,19 @@ ClassDesc2* GetMatStoreDesc() {
 static MatStoreAction MatStoreActions(
 	MAXSTORE_ACT_INTERFACE, _T("MatStore"), IDS_CATEGORY, &matStoreDesc, 
 	FP_ACTIONS, kActionMainUIContext,
-		MatStoreAction::pm_show, _T("show"), IDS_CLASS_NAME, 0, f_icon,_T("AtmosApp"),1, p_end,
+		MatStoreAction::pm_show, _T("show"), IDS_CLASS_NAME, 0, f_icon, _T("MatStoreIcon"),1, p_end,
 	p_end);
-
 
 MatStore::MatStore()
 {
 	ext = FilterList();
-	ext.Append(_M("MAT LAYOUT(*.csv)"));
-	ext.Append(_M("*.csv"));
+	ext.Append(_M("MAT LAYOUT(*.xml)"));
+	ext.Append(_M("*.xml"));
 }
 
-MatStore::~MatStore()
-{
+MatStore::~MatStore(){}
 
-}
-
-void MatStore::DeleteThis()
-{
-}
+void MatStore::DeleteThis(){}
 
 // Activate and Stay Resident
 DWORD MatStore::Start()
@@ -112,7 +106,7 @@ void MatStore::StoreMat()
 {
 	int res;
 	{
-		if (mats.size() != 0)
+		if (material_lib.materials.size() != 0)
 			res = wxGetApp().ShowWarnDialog();
 		else
 			res = wxID_YES;
@@ -120,8 +114,7 @@ void MatStore::StoreMat()
 
 	if (res != wxID_NO && res != wxID_CANCEL)
 	{
-		mats.clear();
-		nodes.clear();
+		material_lib.materials.clear();
 		int skip = 0;
 		string skipped;
 		for (int i = 0; i < ip->GetSelNodeCount(); i++)
@@ -129,14 +122,13 @@ void MatStore::StoreMat()
 			INode* node = ip->GetSelNode(i);
 			Mtl* mtl = node->GetMtl();
 			if (mtl) {
-				mats.push_back(mtl);
-				nodes.push_back(node);
+				material_lib.materials.push_back(MAT(wchar_tosting(node->GetName()), wchar_tosting(mtl->GetName())));
 			}
 			else skip++;
 		}
 		if (skip > 0) skipped = "Skipped " + to_string(skip) + " Objects";
 		else skipped = "";
-		string msg = "Stored " + to_string(nodes.size()) + " objects materials " + skipped;
+		string msg = "Stored " + to_string(material_lib.materials.size()) + " objects materials " + skipped;
 		ip->PushPrompt(toWideString(msg));
 	}
 	else
@@ -149,11 +141,12 @@ void MatStore::ReStoreMat()
 	int skip = 0;
 	int objs = 0;
 	string skipped;
-	for each (INode* var in nodes)
+	for each (MAT var in material_lib.materials)
 	{
-		ULONG hd = var->GetHandle();
+		INode* cnode = ip->GetINodeByName(toWideString(var.first));
+		ULONG hd = cnode->GetHandle();
 		if (ip->GetINodeByHandle(hd)) {
-			var->SetMtl(mats[i]);
+			cnode->SetMtl(getSceneMat(var.second));
 			objs++;
 		}
 		else skip++;
@@ -170,18 +163,16 @@ void MatStore::SaveMat()
 	WStr dir, name;
 	if (((Interface8*)ip)->DoMaxSaveAsDialog(ip->GetMAXHWnd(), _M("Save Mat Layout to File"), name, dir, ext))
 	{
-		ofstream savefile(name);
-		if (savefile.is_open()) {
-			for (int i = 0; i < mats.size(); i++)
-			{
-				wstring ws(nodes[i]->GetName());
-				string strname(ws.begin(), ws.end());
-				savefile << strname << "," << mats[i]->GetName() << endl;
+		{
+			ofstream savefile(name);
+			if (savefile.is_open()) {
+				cereal::XMLOutputArchive archive(savefile);
+				archive(CEREAL_NVP(material_lib));
+				ip->PushPrompt(toWideString("Saved " + to_string(material_lib.materials.size()) + " objects materials"));
 			}
-			savefile.close();
+			else
+				MessageBox(ip->GetMAXHWnd(),"Save to file " + name + " failed, Cannot open file!", NULL, MB_OK);
 		}
-		else
-			MessageBox(ip->GetMAXHWnd(), "Save to file " + name + " failed, Cannot open file!", NULL, MB_OK);
 	}
 }
 
@@ -190,60 +181,32 @@ void MatStore::LoadMat()
 	WStr filename, dir;
 	if (((Interface8*)ip)->DoMaxOpenDialog(ip->GetMAXHWnd(), _M("Open Mat layout"), filename, dir, ext))
 	{
-		mats.clear();
-		nodes.clear();
-
-		string err = "";
-
-		ifstream openfile(filename);
-		if (openfile.is_open())
 		{
-			while (openfile.good())
+			ifstream openfile(filename);
+			if (openfile.is_open())
 			{
-				string name;
-				getline(openfile, name, ',');
-				if (!name.empty())
-				{
-					INode* cnode = ip->GetINodeByName(toWideString(name));
-					if (cnode)
-					{
-						nodes.push_back(cnode);
-
-						string mat;
-						getline(openfile, mat);
-						MtlBaseLib* lib = ip->GetSceneMtls();
-						Mtl* mtl = (Mtl*)lib->GetReference(lib->FindMtlByName(WStr(toWideString(mat))));
-						if (mtl)
-							mats.push_back(mtl);
-						else {
-							nodes.pop_back();
-							err += name + " missing material: " + mat + "\n";
-						}
-					}
-					else
-					{
-						openfile.ignore(INT_MAX, '\n');
-						err += name + " object not found \n";
-					}
-				}
+				cereal::XMLInputArchive archive(openfile);
+				archive(CEREAL_NVP(material_lib));
+				ip->PushPrompt(toWideString("Loaded " + to_string(material_lib.materials.size()) + " objects materials"));
 			}
-			openfile.close();
-			if (!err.empty()) {
-				MessageBox(ip->GetMAXHWnd(), toWideString("Errors while loading file!!!\nsee the Dump Log for more details \nLocation: ") + dir + toWideString("matstore.dump") , NULL, MB_OK);
-				wstring ws(dir);
-				string directory(ws.begin(), ws.end());
-				ofstream dump(directory + "matstore.dump");
-				if (dump.is_open()) {
-					dump << err;
-					dump.close();
-				}
-
-			}
-			ip->PushPrompt(toWideString("Loaded " + to_string(nodes.size()) + " objects materials"));
+			else
+				MessageBox(ip->GetMAXHWnd(), "Cannot open file " + filename, NULL, MB_OK);
 		}
-		else
-			MessageBox(ip->GetMAXHWnd(), "Cannot open file " + filename , NULL, MB_OK);
 	}
+}
+
+std::string MatStore::wchar_tosting(const wchar_t * text)
+{
+	wstring ws(text);
+	string str(ws.begin(), ws.end());
+	return str;
+}
+
+Mtl * MatStore::getSceneMat(std::string name)
+{
+	MtlBaseLib* lib = ip->GetSceneMtls();
+	Mtl* mtl = (Mtl*)lib->GetReference(lib->FindMtlByName(WStr(toWideString(name))));
+	return mtl;
 }
 
 void MatStore::SetVisible(BOOL show)

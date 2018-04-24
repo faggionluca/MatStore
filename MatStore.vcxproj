@@ -54,13 +54,13 @@
     <TargetExt>.gup</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Hybrid|x64'">
-    <IncludePath>$(ADSK_3DSMAX_SDK_2016)\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ADSK_3DSMAX_SDK_2016)\include;$(ProjectDir)dependencies\cereal\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ADSK_3DSMAX_SDK_2016)\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ADSK_3DSMAX_SDK_2016)\include;$(ProjectDir)dependencies\cereal\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ADSK_3DSMAX_SDK_2016)\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ADSK_3DSMAX_SDK_2016)\include;$(ProjectDir)dependencies\cereal\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -78,17 +78,26 @@
     <PostBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Hybrid|x64'">"$([System.IO.Path]::GetFullPath('$(MaxSdkDir)/tools/RunMUIRCT.exe'))" "$([System.IO.Path]::GetFullPath('$(TargetDir)'))\" $(TargetFileName)
 
-XCOPY "$(ProjectDir)icons" "$(OutDir)$(ProjectName)\icons\" /S /Y</Command>
+XCOPY "$(ProjectDir)UiDesign\warn-dlg.png" "$(OutDir)$(ProjectName)\icons\warn-dlg.png" /S /Y
+
+XCOPY "$(ProjectDir)icons\*.bmp" "$(ADSK_3DSMAX_x64_2016)UI_ln\Icons\" /Y 
+XCOPY "$(ProjectDir)icons\*.bmp" "$(ADSK_3DSMAX_x64_2016)UI_ln\IconsDark\" /Y </Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$([System.IO.Path]::GetFullPath('$(MaxSdkDir)/tools/RunMUIRCT.exe'))" "$([System.IO.Path]::GetFullPath('$(TargetDir)'))\" $(TargetFileName)
 
-XCOPY "$(ProjectDir)icons" "$(OutDir)$(ProjectName)\icons\" /S /Y</Command>
+XCOPY "$(ProjectDir)UiDesign\warn-dlg.png" "$(OutDir)$(ProjectName)\icons\warn-dlg.png" /S /Y
+
+XCOPY "$(ProjectDir)icons\*.bmp" "$(ADSK_3DSMAX_x64_2016)UI_ln\Icons\" /Y 
+XCOPY "$(ProjectDir)icons\*.bmp" "$(ADSK_3DSMAX_x64_2016)UI_ln\IconsDark\" /Y </Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$([System.IO.Path]::GetFullPath('$(MaxSdkDir)/tools/RunMUIRCT.exe'))" "$([System.IO.Path]::GetFullPath('$(TargetDir)'))\" $(TargetFileName)
 
-XCOPY "$(ProjectDir)icons" "$(OutDir)$(ProjectName)\icons\" /S /Y</Command>
+XCOPY "$(ProjectDir)UiDesign\warn-dlg.png" "$(OutDir)$(ProjectName)\icons\warn-dlg.png" /S /Y
+
+XCOPY "$(ProjectDir)icons\*.bmp" "$(ADSK_3DSMAX_x64_2016)UI_ln\Icons\" /Y 
+XCOPY "$(ProjectDir)icons\*.bmp" "$(ADSK_3DSMAX_x64_2016)UI_ln\IconsDark\" /Y </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
