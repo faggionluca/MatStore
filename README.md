@@ -1,7 +1,8 @@
 # Mat Store 3Ds Max Tool
 
 **Quickly save and restore materials for selected objects**
-![alt text](http://www.mediafire.com/convkey/6041/okanvz7dp38vq11zg.jpg)
+
+![matstore gif](https://i.imgur.com/6Oc8Yv8.gif)
 
 ### Environment variables
 This project uses some environment variable to make it portable
